@@ -19,26 +19,29 @@ def detect_motion(frames, frame_idx, threshold=25, min_area=100):
     Returns:
         List of bounding boxes for detected motion regions
     """
-    # We need at least 2 frames to detect motion
     if frame_idx < 1 or frame_idx >= len(frames):
         return []
 
-    # Get current and previous frame
-    current_frame = frames[frame_idx]
-    prev_frame = frames[frame_idx - 1]
+    currFrame = frames[frame_idx]
+    prevFrame = frames[frame_idx - 1]
 
-    # TODO: Implement motion detection
-    # 1. Convert frames to grayscale
-    # 2. Apply Gaussian blur to reduce noise (hint: cv2.GaussianBlur)
-    # 3. Calculate absolute difference between frames (hint: cv2.absdiff)
-    # 4. Apply threshold to highlight differences (hint: cv2.threshold)
-    # 5. Dilate the thresholded image to fill in holes (hint: cv2.dilate)
-    # 6. Find contours in the thresholded image (hint: cv2.findContours)
-    # 7. Filter contours by area and extract bounding boxes
+    grayCurr = cv2.cvtColor(currFrame, cv2.COLOR_BGR2GRAY)
+    grayPrev = cv2.cvtColor(prevFrame, cv2.COLOR_BGR2GRAY)
 
-    # Example starter code:
-    motion_boxes = []
+    blurCurr = cv2.GaussianBlur(grayCurr, (21, 21), 0)
+    blurPrev = cv2.GaussianBlur(grayPrev, (21, 21), 0)
 
-    # Your implementation here
+    diff = cv2.absdiff(blurPrev, blurCurr)
+    _, threshImg = cv2.threshold(diff, threshold, 255, cv2.THRESH_BINARY)
+    dilated = cv2.dilate(threshImg, None, iterations=2)
 
-    return motion_boxes
+    contours, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    motionBoxes = []
+    for cnt in contours:
+        if cv2.contourArea(cnt) < min_area:
+            continue
+        x, y, w, h = cv2.boundingRect(cnt)
+        motionBoxes.append((x, y, w, h))
+
+    return motionBoxes
