@@ -32,7 +32,7 @@ python main.py --video ../data/video_file.mp4
 ## Contributions
 
 - **Nolan Smith** - motion_detector.py & visualizer.py
-- **Christian Duarte** - viewport_tracker.py
+- **Christian Duarte** - viewport_tracker.py & README.md
 - **Christian Ricci** - frame_processor.py & README.md
 
 ## The Approach
